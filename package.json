@@ -1,0 +1,17 @@
+{
+    "name": "project_mgmt_system",
+    "version": "1.0.0",
+    "description": "A basic Project Mgmt Platform",
+    "keywords": [
+        "backend",
+        "API",
+        "Creation"
+    ],
+    "license": "ISC",
+    "author": "Tanishq Mathur",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "dev": "node index.js"
+    }
+}
