@@ -11,8 +11,8 @@ const sendEmail = async (options) => {
         }
     })
 
-    const emailTextual = mailGenerator.generatePlaintext(options.MailgenContent)
-    const emailHtml = mailGenerator.generate(options.MailgenContent)
+    const emailTextual = mailGenerator.generatePlaintext(options.mailgenContent)
+    const emailHtml = mailGenerator.generate(options.mailgenContent)
 
 
     const transporter = nodemailer.createTransport({
@@ -51,7 +51,7 @@ const emailVerificationMailgenContent = (username, verificationUrl) => {
         body: {
             name: username,
             intro: "Welcome to our App! we'are excited to have you on board.",
-            actions: {
+            action: {
                 instructions: "To verify your email please click on the following button",
                 button: {
                     color: "#0e3bdd",
