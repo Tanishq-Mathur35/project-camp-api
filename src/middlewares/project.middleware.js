@@ -3,13 +3,12 @@ import { ProjectMember } from '../models/projectMember.model.js'
 import { ApiError } from '../utils/api-error.js'
 import { asyncHandler } from '../utils/async-handler.js'
 
-
 export const validateProjectPermission = (roles = []) => {
-    asyncHandler(async (req, res, next) => {
+    return asyncHandler(async (req, res, next) => {
         const { projectId } = req.params
 
         if (!projectId) {
-            throw new ApiError(400, "project id is missing")
+            throw new ApiError(400, "Project id is missing")
         }
 
         const project = await ProjectMember.findOne({
@@ -18,10 +17,10 @@ export const validateProjectPermission = (roles = []) => {
         })
 
         if (!project) {
-            throw new ApiError(400, "project not found")
+            throw new ApiError(404, "Project not found")
         }
 
-        const givenRole = project?.role
+        const givenRole = project.role
 
         req.user.role = givenRole
 
