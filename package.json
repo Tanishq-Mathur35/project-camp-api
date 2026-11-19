@@ -13,7 +13,9 @@
     "main": "index.js",
     "scripts": {
         "dev": "nodemon src/index.js",
-        "start": "node src/index.js"
+        "start": "node src/index.js",
+        "frontend": "npm --prefix FRONTEND run dev",
+        "frontend:build": "npm --prefix FRONTEND run build"
     },
     "dependencies": {
         "bcrypt": "^6.0.0",
