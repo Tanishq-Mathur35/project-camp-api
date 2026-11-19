@@ -89,6 +89,7 @@ const createProjectValidator = () => {
     ]
 }
 
+
 const addMemberToProjectValidator = () => {
     return [
         body("email")
@@ -107,9 +108,35 @@ const addMemberToProjectValidator = () => {
 }
 
 
+const createNoteValidator = () => {
+    return [
+        body("content")
+            .trim()
+            .notEmpty()
+            .withMessage("Content is required")
+            .isLength({ max: 5000 })
+            .withMessage("Content cannot exceed 5000 characters")
+    ]
+}
+
+
+const updateNoteValidator = () => {
+    return [
+        body("content")
+            .trim()
+            .notEmpty()
+            .withMessage("Content is required")
+            .isLength({ max: 5000 })
+            .withMessage("Content cannot exceed 5000 characters")
+    ]
+}
+
+
 export {
     addMemberToProjectValidator,
+    createNoteValidator,
     createProjectValidator,
+    updateNoteValidator,
     userChangeCurrentPasswordValidator,
     userForgotPasswordValidator,
     userLoginValidator,
