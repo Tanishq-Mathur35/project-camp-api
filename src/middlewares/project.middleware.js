@@ -7,8 +7,8 @@ export const validateProjectPermission = (roles = []) => {
     return asyncHandler(async (req, res, next) => {
         const { projectId } = req.params
 
-        if (!projectId) {
-            throw new ApiError(400, "Project id is missing")
+        if (!projectId || !mongoose.isValidObjectId(projectId)) {
+            throw new ApiError(400, "Invalid or missing project id")
         }
 
         const project = await ProjectMember.findOne({

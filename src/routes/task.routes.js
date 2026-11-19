@@ -12,6 +12,7 @@ import {
 } from "../controllers/task.controller.js"
 
 import { verifyJWT } from "../middlewares/auth.middleware.js"
+import { upload } from "../middlewares/multer.middleware.js"
 import { validateProjectPermission } from "../middlewares/project.middleware.js"
 
 import {
@@ -42,6 +43,7 @@ router
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN
         ]),
+        upload.array("attachments"),
         createTask
     )
 

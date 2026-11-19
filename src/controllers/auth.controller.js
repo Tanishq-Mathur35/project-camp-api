@@ -57,7 +57,7 @@ const registerUser = asyncHandler(async (req, res) => {
         subject: "Please verify your email",
         mailgenContent: emailVerificationMailgenContent(
             user.username,
-            `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`
+            `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`
         )
     })
 
@@ -73,7 +73,7 @@ const registerUser = asyncHandler(async (req, res) => {
         .status(201)
         .json(
             new ApiResponse(
-                200,
+                201,
                 { user: createdUser },
                 "User registered successfully and verification email has been sent on your email"
             )
@@ -84,11 +84,16 @@ const registerUser = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
     const { email, password, username } = req.body
 
-    if (!email) {
-        throw new ApiError(400, "Email is required")
+    if (!email && !username) {
+        throw new ApiError(400, "Username or email is required")
     }
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({
+        $or: [
+            ...(email ? [{ email }] : []),
+            ...(username ? [{ username }] : [])
+        ]
+    })
 
     if (!user) {
         throw new ApiError(400, "User does not exists")
@@ -234,7 +239,7 @@ const resendEmailVerification = asyncHandler(async (req, res) => {
         subject: "Please verify your email",
         mailgenContent: emailVerificationMailgenContent(
             user.username,
-            `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`
+            `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`
         )
     })
 
@@ -353,7 +358,7 @@ const resetForgotPassword = asyncHandler(async (req, res) => {
     });
 
     if (!user) {
-        throw new ApiError(489, "Token is invalid or expired")
+        throw new ApiError(400, "Token is invalid or expired")
     }
 
     user.forgotPasswordToken = undefined

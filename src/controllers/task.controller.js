@@ -6,6 +6,7 @@ import { Tasks } from "../models/task.model.js"
 import { ApiError } from "../utils/api-error.js"
 import { ApiResponse } from "../utils/api-response.js"
 import { asyncHandler } from "../utils/async-handler.js"
+import { UserRolesEnum } from "../utils/constants.js"
 
 
 const getTasks = asyncHandler(async (req, res) => {
@@ -45,9 +46,12 @@ const createTask = asyncHandler(async (req, res) => {
 
     const files = req.files || []
 
+    const serverUrl = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 3000}`
+
     const attachments = files.map((file) => {
+        const storedName = file.filename || file.originalname
         return {
-            url: `${process.env.SERVER_URL}/images/${file.originalname}`,
+            url: `${serverUrl}/images/${storedName}`,
             mimetype: file.mimetype,
             size: file.size
         }
@@ -57,7 +61,7 @@ const createTask = asyncHandler(async (req, res) => {
         title,
         description,
         project: new mongoose.Types.ObjectId(projectId),
-        assignedTo: assignedTo
+        assignedTo: assignedTo && mongoose.isValidObjectId(assignedTo)
             ? new mongoose.Types.ObjectId(assignedTo)
             : undefined,
         status,
@@ -123,7 +127,9 @@ const updateTask = asyncHandler(async (req, res) => {
     }
 
     if (assignedTo !== undefined) {
-        updateFields.assignedTo = assignedTo || null
+        updateFields.assignedTo = assignedTo && mongoose.isValidObjectId(assignedTo)
+            ? new mongoose.Types.ObjectId(assignedTo)
+            : null
     }
 
     if (status !== undefined) {
@@ -209,6 +215,10 @@ const updateSubTask = asyncHandler(async (req, res) => {
     const updateFields = {}
 
     if (title !== undefined) {
+        if (req.user.role === UserRolesEnum.MEMBER) {
+            throw new ApiError(403, "Members are only allowed to update subtask completion status")
+        }
+
         if (typeof title !== "string" || !title.trim()) {
             throw new ApiError(400, "Subtask title cannot be empty")
         }

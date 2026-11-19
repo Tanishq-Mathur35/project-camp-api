@@ -59,6 +59,7 @@ router
 
 router
     .route("/current-user")
+    .get(verifyJWT, getCurrentUser)
     .post(verifyJWT, getCurrentUser)
 
 router
